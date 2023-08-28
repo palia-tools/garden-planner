@@ -14,7 +14,7 @@ function MyButton() {
   );
 }
 
-function MyGrid({color}: {color: string}) {
+function MyGrid({ color }: { color: string }) {
   let boxes = [];
 
   function handleMouseOver(e: React.MouseEvent<HTMLDivElement>) {
@@ -22,13 +22,17 @@ function MyGrid({color}: {color: string}) {
   }
 
   function handleMouseOut(e: React.MouseEvent<HTMLDivElement>) {
-    e.currentTarget.style.backgroundColor = 'white';
+    e.currentTarget.style.backgroundColor = e.currentTarget.getAttribute("value") as string;
+  }
+
+  function handleMouseClick(e: React.MouseEvent<HTMLDivElement>) {
+    e.currentTarget.setAttribute("value", color);
   }
 
   for (let i = 0; i < 4; i++) {
     boxes.push(
       <Grid key={i} item xs={1}>
-        <Item onMouseOver={handleMouseOver} onMouseOut={handleMouseOut} >xs=8</Item>
+        <Item onMouseOver={handleMouseOver} onMouseOut={handleMouseOut} onMouseDown={handleMouseClick} value="white">xs=8</Item>
       </Grid>
     )
   }
@@ -47,21 +51,21 @@ type PickerProps = {
   onChange: (event: React.MouseEvent<HTMLElement>, newColor: string) => void;
 }
 
-function Picker({color, onChange}: PickerProps) {
-  
+function Picker({ color, onChange }: PickerProps) {
+
 
   return (
-      <ToggleButtonGroup
-        color="primary"
-        value={color}
-        exclusive
-        onChange={onChange}
-        aria-label="Color"
-      >
-        <ToggleButton value="red" sx={{color: "white"}}>Red</ToggleButton>
-        <ToggleButton value="green" sx={{color: "white"}}>Green</ToggleButton>
-        <ToggleButton value="blue" sx={{color: "white"}}>Blue</ToggleButton>
-      </ToggleButtonGroup>
+    <ToggleButtonGroup
+      color="primary"
+      value={color}
+      exclusive
+      onChange={onChange}
+      aria-label="Color"
+    >
+      <ToggleButton value="red" sx={{ color: "white" }}>Red</ToggleButton>
+      <ToggleButton value="green" sx={{ color: "white" }}>Green</ToggleButton>
+      <ToggleButton value="blue" sx={{ color: "white" }}>Blue</ToggleButton>
+    </ToggleButtonGroup>
   )
 }
 
@@ -91,12 +95,14 @@ function PageObject() {
   )
 }
 
-const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
-  ...theme.typography.body2,
-  padding: theme.spacing(1),
-  textAlign: 'center',
-  color: theme.palette.text.secondary,
+const Item = styled(Paper)<{ value: string }>(({ theme, value }) => ({
+  ...(value && {
+    backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+    ...theme.typography.body2,
+    padding: theme.spacing(1),
+    textAlign: 'center',
+    color: theme.palette.text.secondary,
+  })
 }));
 
 export default function Home() {
